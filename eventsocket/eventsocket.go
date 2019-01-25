@@ -116,7 +116,7 @@ func ListenAndServe(addr string, fn HandleFunc) error {
 //	}
 //
 func Dial(addr, passwd string) (*Connection, error) {
-	c, err := net.Dial("tcp", addr)
+	c, err := net.DialTimeout("tcp", addr, 5*time.Second)
 	if err != nil {
 		return nil, err
 	}
@@ -331,6 +331,11 @@ func (h *Connection) Send(command string) (*Event, error) {
 	//	return nil, errInvalidCommand
 	//}
 	fmt.Fprintf(h.conn, "%s\r\n\r\n", command)
+
+	if strings.Contains(command, "uuid_break") {
+		return nil, nil
+	}
+
 	var (
 		ev  *Event
 		err error
