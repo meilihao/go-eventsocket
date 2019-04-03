@@ -407,6 +407,11 @@ func (h *Connection) SendMsg(m MSG, uuid, appData string) (*Event, error) {
 	if _, err := b.WriteTo(h.conn); err != nil {
 		return nil, err
 	}
+
+	if strings.Contains(m["execute-app-name"], "hangup") {
+		return nil, nil
+	}
+
 	var (
 		ev  *Event
 		err error
